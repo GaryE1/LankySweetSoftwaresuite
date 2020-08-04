@@ -6,9 +6,14 @@ var myBall_xVel = 0, myBall_yVel = 0;
 var myBall_top    = myBall_yPos - ballSize/2,
 	myBall_bottom = myBall_yPos + ballSize/2,
 	myBall_left   = myBall_xPos - ballSize/2,
-	myBall_right  = myBall_xPos + ballSize/2;
+	myBall_right  = myBall_xPos + ballSize/2; 
 var paddleWidth= 15, paddleHeight=70, paddleVel=5, 
 leftPaddle_xPos = ballSize, rightPaddle_xPos = canvasWidth - ballSize,
+	leftPaddle_right  = leftPaddle_xPos - paddleWidth/2,
+  leftPaddle_left   = leftPaddle_xPos + paddleWidth/2,
+  rightPaddle_left   = rightPaddle_xPos + paddleWidth/2,
+	rightPaddle_right  = rightPaddle_xPos - paddleWidth/2,
+  rightPaddle_top    = rightPaddle_yPos - paddleHeight/2,
 	leftPaddle_yPos = canvasHeight / 2, rightPaddle_yPos = canvasHeight / 2;
 var r = 0, g = 0, b = 0;
 
@@ -28,7 +33,8 @@ function draw() {
 	rect(leftPaddle_xPos,leftPaddle_yPos,paddleWidth,paddleHeight);
 	rect(rightPaddle_xPos,rightPaddle_yPos,paddleWidth,paddleHeight) 
   movePaddles();
-	
+  bouncePaddles();
+  displayScore();
 	moveAndBounceWall();
 	rect(myBall_xPos,myBall_yPos,ballSize,ballSize);
 }
@@ -40,19 +46,21 @@ function moveAndBounceWall() {
 	myBall_left  = myBall_xPos - ballSize/2;
 	myBall_right = myBall_xPos + ballSize/2;
 	if ( (myBall_right > canvasWidth) || (myBall_left < 0) ) {
-		myBall_xVel = -myBall_xVel;
+    updateScore();
+		myBall_xPos = canvasWidth/2;
+    myBall_yPos = canvasHeight/2
 		colorChange();
 	}
-
+  
 
 	myBall_yPos   = myBall_yPos + myBall_yVel;
 	myBall_top    = myBall_yPos - ballSize/2;
 	myBall_bottom = myBall_yPos + ballSize/2;
 	if ( (myBall_bottom > canvasHeight) || (myBall_top < 0) ) {
 		myBall_yVel = -myBall_yVel;
+		colorChange();
 	}
 }
-
 function colorChange() {
 	r = random(255);
 	g = random(255);
@@ -84,9 +92,41 @@ function movePaddles() {
 // ball bouncing
 // check if ball hits wall barriers
 // reset ball in middle 
+var bounceL=0;
+var bounceR=0;
+var rightScore =0, leftScore =0;
+function bouncePaddles() {
+	if ((myBall_bottom >= leftPaddle_top) && (myBall_top <= leftPaddle_bottom)) {
+		if (myBall_left <= leftPaddle_right) {
+			myBall_xVel = -myBall_xVel;
+    }
+  }
 
-function bouncepaddle
+	if ((myBall_bottom >= rightPaddle_top) && (myBall_top <= rightPaddle_bottom)) {
+		if (myBall_right >= rightPaddle_left) {
+			myBall_xVel = -myBall_xVel;
+			bounceR++;
+			console.log("Bounce Right " + bounceR);
+		}
+  }
+}
 
-if(rect1X > rect2x-rectwidth && rect1x-30 <rect2x+rect2width && rect1y+30 > rect2y-rect2height && rect1y-30 < rect2y+rect2height+30){
-  move=move*-1
+
+function updateScore(){
+  if (myBall_right >= canvasWidth) {
+    leftScore++;
+  
+  }
+  if (myBall_left <= 0){
+    rightScore++;
+  }
+}
+
+function displayScore(){
+
+
+fill(color(0,0,0));
+textSize(25);
+text("score: "+leftScore, canvasWidth/4, ballSize);
+text("score: "+rightScore, canvasWidth*0.75, ballSize);
 }
